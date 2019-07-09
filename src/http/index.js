@@ -65,7 +65,7 @@ function isSuccessRes(res) {
   return !!res;
 }
 
-class Http {
+class Index {
   http(url = '', data = {}, config = {}, method = 'post') {
     let params = initData(data);
     let {isSign, loading, resDataKey} = initConfig(config);
@@ -127,4 +127,4 @@ class Http {
   }
 }
 
-export default new Http();
+export default new Index();
