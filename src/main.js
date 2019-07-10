@@ -5,7 +5,6 @@ import store from './store'
 import mixins from './mixins'
 
 Vue.config.productionTip = false;
-console.log(mixins);
 Vue.mixin(mixins);
 
 new Vue({

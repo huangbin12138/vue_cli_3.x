@@ -18,5 +18,9 @@
         num: 0,
       }
     },
+    created(){
+      console.log(this.http);
+      this.http.getList({a: 1});
+    },
   }
 </script>

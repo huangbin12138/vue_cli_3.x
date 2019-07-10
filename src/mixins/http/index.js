@@ -1,4 +1,5 @@
 import axios from 'axios';
+import apiList from './api';
 
 // axios 配置
 const axiosConfig = {
@@ -66,6 +67,7 @@ function isSuccessRes(res) {
 }
 
 class Index {
+
   http(url = '', data = {}, config = {}, method = 'post') {
     let params = initData(data);
     let {isSign, loading, resDataKey} = initConfig(config);
@@ -79,7 +81,7 @@ class Index {
         throw result;
       }
     });
-  };
+  }
 
   post(...arg) {
     return this.http(...arg, 'post');
@@ -117,7 +119,7 @@ class Index {
 
   $post(...arg) {
     arg[2].isSign = true;
-    return post(...arg);
+    return this.post(...arg);
   }
 
   $err(err) {
@@ -125,6 +127,9 @@ class Index {
     load.close(true);
     console.log(err);
   }
+
 }
 
-export default new Index();
+let http = new Index();
+Object.assign(http, apiList);
+export default http;
