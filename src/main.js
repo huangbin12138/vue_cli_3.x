@@ -2,11 +2,11 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router/'
 import store from './store'
-import http from './http'
+import mixins from './mixins'
 
 Vue.config.productionTip = false;
-
-Vue.prototype.http = http;
+console.log(mixins);
+Vue.mixin(mixins);
 
 new Vue({
   router,
