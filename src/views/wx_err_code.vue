@@ -1,5 +1,16 @@
 <template>
-  <div class=""></div>
+  <div class="err-code-body pb20">
+    <input v-model="search" type="text" class="gl-input search tac pos t0" placeholder="关键字搜索"/>
+    <div class="err-code mlr-auto">
+      <div class="flex jcb item tal"
+           v-for="item in list" :key="item.code"
+           v-if="!search || testSearch(item)">
+        <div class="code flex-1">{{item.code}}</div>
+        <div class="msg flex-3">{{item.msg}}</div>
+        <div class="remark flex-3">{{item.remark}}</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -7,6 +18,7 @@
     name: "wx_err_code",
     data() {
       return {
+        search: '',
         list: [
           {code: "40001", msg: "invalid credential", remark: "不合法的调用凭证"},
           {code: "40002", msg: "invalid grant_type", remark: "不合法的grant_type"},
@@ -81,9 +93,35 @@
         ]
       }
     },
+    methods: {
+      testSearch(item) {
+        let {search} = this;
+        return item.code.indexOf(search) > -1 || item.msg.indexOf(search) > -1 || item.remark.indexOf(search) > -1;
+      },
+    },
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+  .search {
+    display: block;
+    margin: 2rem 0;
+    padding: .5rem;
+    background-color: rgba(255, 255, 255, .7);
+    border-bottom: .06rem #f5f5f5 solid;
+  }
+  .err-code {
+    max-width: 50rem;
+    font-size: 1rem;
+    line-height: 2;
+    box-shadow: .1rem .1rem .2rem #aaa;
+  }
 
+  .item {
+    padding: 0 10px;
+    background-color: #fff;
+    &:nth-child(2n) {
+      background-color: #f5f5f5;
+    }
+  }
 </style>

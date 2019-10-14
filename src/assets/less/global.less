@@ -1,0 +1,209 @@
+/* 不显示滚动条 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/*margin*/
+.mlr-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* overflow */
+
+.ovh {
+  overflow: hidden;
+}
+
+.ova {
+  overflow: auto;
+}
+
+.dib {
+  display: inline-block;
+}
+
+.dn {
+  display: none;
+}
+
+.flex {
+  display: flex;
+}
+
+.fww {
+  flex-wrap: wrap;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.jca {
+  justify-content: space-around;
+}
+
+.jce {
+  justify-content: space-evenly;
+}
+
+.jcb {
+  justify-content: space-between;
+}
+
+.clearfix {
+  &:before {
+    content: '';
+    display: table;
+  }
+  &:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+.pos {
+  position: sticky;
+}
+
+.poa {
+  position: absolute;
+}
+
+.por {
+  position: relative;
+}
+
+.pof {
+  position: fixed;
+}
+
+/* \n换行 */
+.wspl {
+  white-space: pre-line;
+}
+
+.wsnw {
+  white-space: nowrap;
+}
+
+.abs-mc {
+  .poa;
+  .t50;
+  .l50;
+  transform: translate(-50%, -50%);
+}
+
+.abs-m {
+  .poa;
+  .t50;
+  transform: translateY(-50%);
+}
+
+.abs-c {
+  .poa;
+  .l50;
+  transform: translateX(-50%);
+}
+
+.fix-mc {
+  .pof;
+  .t50;
+  .l50;
+  transform: translate(-50%, -50%);
+}
+
+.fix-m {
+  .pof;
+  .t50;
+  transform: translateY(-50%);
+}
+
+.fix-c {
+  .pof;
+  .l50;
+  transform: translateX(-50%);
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+.tac {
+  text-align: center;
+}
+
+.tal {
+  text-align: left;
+}
+
+.tar {
+  text-align: right;
+}
+
+.bsb {
+  box-sizing: border-box;
+}
+
+.vam {
+  vertical-align: middle;
+}
+
+.vat {
+  vertical-align: top;
+}
+
+.vab {
+  vertical-align: bottom;
+}
+
+.transition {
+  transition: all .3s;
+}
+
+/* 文本不可选择 */
+.unselect {
+  user-select: none;
+}
+
+.gl-title {
+  overflow: visible;
+  padding-left: .53rem;
+  border-left: solid .19rem #1f8bf8;
+  line-height: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.df-popup {
+  background-color: transparent;
+}
+
+.gl-input {
+  background-color: transparent;
+  &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: #c5c5c5;
+    font-size: 1rem;
+  }
+  &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #c5c5c5;
+    font-size: 1rem;
+  }
+  &::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #c5c5c5;
+    font-size: 1rem;
+  }
+  &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #c5c5c5;
+    font-size: 1rem;
+  }
+}
+
+/* 全局样式 end */
+

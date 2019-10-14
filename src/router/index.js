@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue'
+import wxErrCode from '../views/wx_err_code'
 
 Vue.use(Router)
 
@@ -10,6 +11,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home
+    },
+    {
+      path: '/wxcode',
+      name: 'WXERROR',
+      component: wxErrCode
     },
     {
       path: '/about',

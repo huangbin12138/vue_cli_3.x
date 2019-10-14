@@ -4,6 +4,8 @@ import router from './router/'
 import store from './store'
 import mixins from './mixins'
 
+import './assets/less/component-style.less';
+
 import GlPlayVideo from './components/playvideo'
 
 Vue.config.productionTip = false;

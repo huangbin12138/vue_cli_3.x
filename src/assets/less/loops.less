@@ -1,0 +1,103 @@
+/*
+ *
+ * 循环
+ * classes: 类名前缀数组
+ * props: 类名对应属性数组
+ * values: 设置的值数组
+ * .(class)(unit(value)) {prop: value}
+ * */
+.loop-classes(@classes, @props, @value, @len: length(@classes)) when (@len > 0) {
+  @class-name: extract(@classes, @len);
+  @prop-name: extract(@props, @len);
+  @value-class: unit(@value);
+  .@{class-name}@{value-class} {
+      @{prop-name}: @value;
+  }
+  .loop-classes(@classes, @props, @value, @len - 1);
+}
+
+.loop-values(@classes, @props, @values, @len: length(@values)) when (@len > 0) {
+  .loop-classes(@classes, @props, extract(@values, @len));
+  .loop-values(@classes, @props, @values, @len - 1);
+}
+
+/* .m1{margin: 1px} ... */
+.loop-values(
+  m mt mr mb ml p pt pr pb pl,
+  margin margin-top margin-right margin-bottom margin-left padding padding-top padding-right padding-bottom padding-left,
+  1px 2px 4px 5px 10px 15px 20px 25px
+);
+
+/* .lh14{line-height: 14px} ... */
+.loop-values(
+  lh fs,
+  line-height font-size,
+  14px 16px 18px 20px 22px 24px 26px 30px
+);
+
+/* .zi104{line-height: 14px} ... */
+.loop-values(
+  zi,
+  z-index,
+  0 1 10 100 1000 10000
+);
+
+/* value 为0 */
+.loop-values(
+  w h l r t b bdr fs,
+  width height left right top bottom border-radius font-size,
+  0
+);
+
+/* 数字循环 */
+.loop-num(@end, @start: 1) when (@end >= @start) {
+  //多行超出显示省略号 wot1 wot2 ...
+  .wot@{start} {
+    -webkit-line-clamp: @start;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  //.flex-1{flex: 1} ...
+  .flex-@{start} {
+    flex: @start;
+  }
+  //.flex-1{flex: 1} ...
+  .lh@{start} {
+    line-height: @start;
+  }
+
+  .loop-num(@end, @start + 1);
+}
+
+.loop-num(5);
+
+/* 数组循环 */
+.loop-array(@arr, @len: length(@arr)) when (@len > 0) {
+  @val: extract(@arr, @len);
+  @per: @val * 1%;
+  @vh: @val * 1vh;
+  @vw: @val * 1vw;
+  //.w10{width: 10%} ...
+  .loop-values(
+    w h l r t b bdr,
+    width height left right top bottom border-radius,
+    @per
+  );
+  //.vw10{width: 10%} ...
+  .loop-values(
+    vw,
+    width,
+    @vw
+  );
+  //.vh10{width: 10%} ...
+  .loop-values(
+    vh,
+    height,
+    @vh
+  );
+
+  .loop-array(@arr, @len - 1);
+}
+
+.loop-array(5 10 15 20 25 30 33 40 50 66 75 90 100);
