@@ -6,12 +6,14 @@ import mixins from './mixins'
 
 import './assets/less/component-style.less';
 
-import GlPlayVideo from './components/playvideo'
-
 Vue.config.productionTip = false;
 Vue.mixin(mixins);
 
-Vue.component('gl-play-video', GlPlayVideo);
+const components = {
+  'gl-play-video': require('./components/playvideo'),
+};
+
+Object.keys(components).map(name => Vue.component(name, components[name].default));
 
 new Vue({
   router,

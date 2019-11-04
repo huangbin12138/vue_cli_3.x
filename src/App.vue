@@ -18,6 +18,8 @@
           'home',
           'about',
           'wxcode',
+          'mysql',
+          'homepage',
         ],
       }
     },
@@ -35,6 +37,7 @@
 
   #nav {
     padding: 30px;
+    border-bottom: 1px solid #000;
     a {
       font-weight: bold;
       color: #2c3e50;

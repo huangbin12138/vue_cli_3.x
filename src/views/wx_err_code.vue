@@ -1,6 +1,6 @@
 <template>
   <div class="err-code-body pb20">
-    <input v-model="search" type="text" class="gl-input search tac pos t0" placeholder="关键字搜索"/>
+    <input v-model="search" type="text" class="gl-input search tac pos t0 w100 bsb" placeholder="关键字搜索"/>
     <div class="err-code mlr-auto">
       <div class="flex jcb item tal"
            v-for="item in list" :key="item.code"
@@ -104,7 +104,6 @@
 
 <style scoped lang="less">
   .search {
-    display: block;
     margin: 2rem 0;
     padding: .5rem;
     background-color: rgba(255, 255, 255, .7);

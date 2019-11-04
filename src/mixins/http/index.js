@@ -83,12 +83,12 @@ class Index {
     });
   }
 
-  post(...arg) {
-    return this.http(...arg, 'post');
+  post(url, data, config) {
+    return this.http(url, data, config, 'post');
   }
 
-  get(...arg) {
-    return this.http(...arg, 'get');
+  get(url, data, config) {
+    return this.http(url, data, config, 'get');
   }
 
   test(...arg) {
@@ -117,9 +117,10 @@ class Index {
     return out;
   }
 
-  $post(...arg) {
-    arg[2].isSign = true;
-    return this.post(...arg);
+  $post(url, data, config) {
+    config = config || {};
+    config.isSign = true;
+    return this.post(url, data, config);
   }
 
   $err(err) {

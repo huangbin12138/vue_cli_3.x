@@ -1,29 +1,44 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../views/Home.vue'
-import wxErrCode from '../views/wx_err_code'
 
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/wxcode',
-      name: 'WXERROR',
-      component: wxErrCode
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+const pages = {
+  Home: require('../views/Home'),
+  HomePage: require('../views/homepage'),
+  Mysql: require('../views/mysql'),
+  WxCode: require('../views/wx_err_code'),
+  About: require('../views/About'),
+};
+
+function createRoutes(components, path = '/', callback) {
+  if (!components) return [];
+  let routes = [];
+  let first = true;
+  Object.keys(components).map(key => {
+    let route = {
+      path: path + key.toLocaleLowerCase().replace('_', '/'),
+      name: key.replace('_', ''),
+      components: components[key],
+      children: [],
+    };
+    route.children.push(...createRoutes(components[key].children, route.path, callback));
+    if (first) {
+      route.alias = path;
+      first = false;
     }
-  ]
+    typeof callback === 'function' && callback(route);
+    routes.push(route);
+  });
+  routes.push({
+    path: '**',
+    redirect: path,
+  });
+  return routes;
+}
+
+export default new Router({
+  routes: createRoutes(pages, '/', route => {
+    //
+  }),
 })
