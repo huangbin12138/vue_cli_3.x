@@ -15,7 +15,7 @@
 
 <script>
   export default {
-    name: "wx_err_code",
+    name: "WxErrCode",
     data() {
       return {
         search: '',

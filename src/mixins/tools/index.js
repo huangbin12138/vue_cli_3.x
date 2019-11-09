@@ -143,7 +143,7 @@ class T {
    * @params {string} format：返回格式
    * @return {string}
    */
-  formatDate(number, format = 'Y-MM-DD HH:mm:SS') {
+  formatDate(number, format = 'Y-MM-DD HH:mm:ss') {
     let time = number instanceof Date ? number : !isNaN(number) ? new Date(number * 1000) : false;
     let obj = {
       'Y': time.getFullYear(),
@@ -156,10 +156,10 @@ class T {
       'H': time.getHours(),
       'h': time.getHours() % 12 || 12,
       'm': time.getMinutes(),
-      'S': time.getSeconds(),
-      's': time.getTime() % 1000,
+      's': time.getSeconds(),
+      'S': time.getTime() % 1000,
     };
-    format = format.replace(/[YMWDAHSwahms]+/g, e => e.length === 2 && !/[saAWw]+/g.test(e) ? ('00' + obj[e[0]]).slice(-2) : obj[e[0]]);
+    format = format.replace(/([YMWDAHSwahms])\1*/g, e => e.length === 2 && !/[SaAWw]/g.test(e) ? ('00' + obj[e[0]]).slice(-2) : obj[e[0]]);
     return format;
   }
 
@@ -184,7 +184,7 @@ class T {
     if (format.indexOf('H') >= 0) regs.m %= 60;
     if (format.indexOf('D') >= 0) regs.H %= 24;
 
-    format = format.replace(/[smhd]+/ig, e => {
+    format = format.replace(/[smhd]\1*/ig, e => {
       let val = regs[e[0]] || 0;
       val += '';
       if (e.length === 2 && val.length < 2) {

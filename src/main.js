@@ -9,11 +9,16 @@ import './assets/less/component-style.less';
 Vue.config.productionTip = false;
 Vue.mixin(mixins);
 
-const components = {
-  'gl-play-video': require('./components/playvideo'),
-};
-
-Object.keys(components).map(name => Vue.component(name, components[name].default));
+// 自动引入全局组件
+const BaseComponent = require.context('./components', true, /\.vue$/);
+let components = [];
+BaseComponent.keys().map(path => {
+  let component = BaseComponent(path).default || BaseComponent(path);
+  // 全局组件中必须有name, name即为标签名
+  components.push(component.name);
+  Vue.component(component.name, component);
+});
+console.warn('components: ', components.join(', '));
 
 new Vue({
   router,
