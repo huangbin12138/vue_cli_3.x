@@ -1,5 +1,6 @@
 import axios from 'axios';
 import apiList from './api';
+import Sign from './sign';
 
 // axios 配置
 const axiosConfig = {
@@ -13,9 +14,14 @@ const axiosConfig = {
 // 加/解密对象
 const sign = {
   // 解密
-  decode: data => data,
+  decode: e => {
+    return Sign.decode_post(e);
+  },
   // 加密
-  encode: data => data,
+  encode: e => {
+    Sign.params = e;
+    return Sign.encode_post();
+  },
 };
 
 // 加载中弹出层
@@ -91,30 +97,25 @@ class Index {
     return this.http(url, data, config, 'get');
   }
 
-  test(...arg) {
+  async test(...arg) {
     let [url, data, config, method] = arg;
     let configs = initConfig(Object.assign({...config}, {
       loading: false,
       resDataKey: '',
     }));
-    let out = {};
     method = method || 'post';
     console.log(url, ':data:>', data);
     console.log(url, ':initData:>', initData(data));
-    console.log(url, ':config:>', config);
-    console.log(url, ':initConfig:>', initConfig({...config}));
-    this.http(url, data, configs, method).then(res => {
+    console.log(url, ':config:>', configs);
+    console.log(url, ':initConfig:>', initConfig({...configs}));
+    try {
+      let res = await this.http(url, data, configs, method);
       console.log(url, ':res:>', res);
-      Object.assign(out, res);
-      if (!Object.keys(out).length) out.status = true;
-    }).catch(err => {
-      Object.assign(out, err);
-      if (!Object.keys(out).length) out.status = false;
+      return res;
+    } catch (err) {
       console.log(url, ':error:>', err);
-    });
-    for (; !Object.keys(out).length;) {
+      throw err;
     }
-    return out;
   }
 
   $post(url, data, config) {

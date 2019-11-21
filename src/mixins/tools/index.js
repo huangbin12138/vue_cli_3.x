@@ -1,4 +1,14 @@
+import Canvas from './canvas'
+
 class T {
+  /**
+   * @desc 创建一个canvas对象
+   * @param {Object/String} config 配置 $el: Dom
+   * */
+  createCanvas(config) {
+    return new Canvas(config);
+  }
+
   /**
    * @desc 判断一个对象是否为DOM对象
    * @func
@@ -170,7 +180,7 @@ class T {
    * @return String
    * */
   numberToTime(number, format = 'HH:mm:ss') {
-    number = isNaN(number) ? 0 : number * 1;
+    number = isNaN(number) ? 0 : (number || 0);
     let regs = {
       S: number | 0,
       s: number / 1000 | 0,
@@ -184,7 +194,7 @@ class T {
     if (format.indexOf('H') >= 0) regs.m %= 60;
     if (format.indexOf('D') >= 0) regs.H %= 24;
 
-    format = format.replace(/[smhd]\1*/ig, e => {
+    format = format.replace(/([smhd])\1*/ig, e => {
       let val = regs[e[0]] || 0;
       val += '';
       if (e.length === 2 && val.length < 2) {

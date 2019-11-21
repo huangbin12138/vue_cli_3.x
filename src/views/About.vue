@@ -1,8 +1,6 @@
 <template>
   <div class="about">
-    <gl-play-video :init="init"></gl-play-video>
-    <div class="float-box" v-if="show"></div>
-    <div class="btn" @click="show = !show; init = !init">click</div>
+    <my-player :videoSrc="videoSrc" :poster="poster" style="width: 550px" class="mlr-auto"></my-player>
   </div>
 </template>
 
@@ -12,20 +10,12 @@
     data() {
       return {
         msg: 'hello',
-        time: new Date(),
-        num: 0,
-        ranNum: 0,
-        max: 10,
-        min: 3,
-        fixed: 1,
-        show: false,
-        init: false
+        videoSrc: require('../assets/f0.mp4'),
+        poster: require('../assets/ttt.jpg'),
       }
     },
     created() {
       // this.http.getList({a: 1});
-      window.tools = this.tools;
-      console.log('create');
     },
   }
 </script>
