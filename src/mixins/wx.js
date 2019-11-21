@@ -38,7 +38,7 @@ export default {
       throw 1; // 用户取消授权
     } else {
       // 已经授权
-      return http.getWxUserInfo({code: query.code});
+      return await http.getWxUserInfo({code: query.code});
     }
   },
 
