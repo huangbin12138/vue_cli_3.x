@@ -12,8 +12,8 @@ class T {
   /**
    * @desc 判断一个对象是否为DOM对象
    * @func
-   * @params {object} element - 要判断的对象或变量
-   * @returns {boolean}
+   * @param {object} element - 要判断的对象或变量
+   * @return {boolean}
    * */
   isDom(element) {
     return element && typeof element === 'object' && element.nodeType === 1 && typeof element.nodeName === 'string';
@@ -22,10 +22,10 @@ class T {
   /**
    * @desc 生成随机数字
    * @func
-   * @params {number} max=1 - 最大值，默认值为1
-   * @params {number} min=0 - 最小值，默认值为0
-   * @params {number} fixed=0 - 小数点位数，默认值为0
-   * @returns {string}
+   * @param {number} [max]=1 - 最大值，默认值为1
+   * @param {number} [min]=0 - 最小值，默认值为0
+   * @param {number} [fixed]=0 - 小数点位数，默认值为0
+   * @return {string}
    * */
   rNumber(max = 1, min = 0, fixed = 0) {
     max < min && (max = [min, min = max][0]);
@@ -35,11 +35,11 @@ class T {
   /**
    * @desc 生成随机字符串
    * @func
-   * @params {number} len=1 - 字符串长度，默认值为1
-   * @params {string} type='a' - 生成字符串包含字符类型（数字，字母（区分大小写），汉字），默认值为a
-   * @params {string} otherStr='' - 除上术类型中字符类型外包含的字符
-   * @params {boolean} canRepeat=true - 字符是否可以重复， 默认可以重复
-   * @returns {string}
+   * @param {number} [len]=1 - 字符串长度，默认值为1
+   * @param {string} [type]='a' - 生成字符串包含字符类型（数字，字母（区分大小写），汉字），默认值为a
+   * @param {string} [otherStr]='' - 除上术类型中字符类型外包含的字符
+   * @param {boolean} [canRepeat]=true - 字符是否可以重复， 默认可以重复
+   * @return {string}
    * @example
    * rString(3, '0a', '*') //生成的字符串长度为3，可能包含数字（type中有数字），小写字母（type中有小写字母）和‘*’号
    * */
@@ -85,10 +85,10 @@ class T {
   /**
    * @desc 生成随机颜色
    * @function
-   * @params {number} min=0 - r,g,b值的最小值，默认为0
-   * @params {number} max=255 - r,g,b值的最大值，默认为255
-   * @params {string} type='hex' - 返回颜色值类型，可能值rgb | hex
-   * @params {string/array}
+   * @param {number} [min]=0 - r,g,b值的最小值，默认为0
+   * @param {number} [max]=255 - r,g,b值的最大值，默认为255
+   * @param {string} [type]='hex' - 返回颜色值类型，可能值rgb | hex
+   * @return {string/array}
    * @example
    * rColor() // [32, 23, 200]
    * */
@@ -105,8 +105,8 @@ class T {
   /**
    * @desc 颜色格式转换
    * @function
-   * @params {string/array} color 颜色值或数组 （[r, g, b], color, #rrggbb, rgb(r, g, b)）
-   * @params {string} type='hex' - 返回颜色值类型，可能值rgb | hex
+   * @param {string/array} color 颜色值或数组 （[r, g, b], color, #rrggbb, rgb(r, g, b)）
+   * @param {string} [type]='hex' - 返回颜色值类型，可能值rgb | hex
    * @return {string/array}
    * @example
    * */
@@ -133,9 +133,9 @@ class T {
   /**
    * @desc 改变颜色亮度
    * @function
-   * @params {string/array} color 颜色值或数组 （[r, g, b], color, #rrggbb, rgb(r, g, b)）
-   * @params {number/string} light=0 - 大于0 ; 小于1时变亮
-   * @params {string} type='hex' - 返回颜色值类型，可能值rgb | hex
+   * @param {string/array} color 颜色值或数组 （[r, g, b], color, #rrggbb, rgb(r, g, b)）
+   * @param {number/string} [light]=0 - 大于0 ; 小于1时变亮
+   * @param {string} [type]='hex' - 返回颜色值类型，可能值rgb | hex
    * @return {string/array}
    * */
   changeColor(color, light = 0, type = 'hex') {
@@ -150,7 +150,7 @@ class T {
    * @desc 10位时间戳转化为年Y 月M 日D 时H 分m 秒s 毫秒S
    * @function
    * @params {number/date} number: 传入10位时间戳 / Date对象
-   * @params {string} format：返回格式
+   * @params {string} [format]：返回格式
    * @return {string}
    */
   formatDate(number, format = 'Y-MM-DD HH:mm:ss') {
@@ -176,7 +176,7 @@ class T {
   /**
    * @desc 毫秒数转时间 (日D 时H 分m 秒s 毫秒S)
    * @param {number} number 要转换的毫秒数
-   * @param {string} format 转换的格式
+   * @param {string} [format] 转换的格式
    * @return String
    * */
   numberToTime(number, format = 'HH:mm:ss') {
@@ -204,6 +204,19 @@ class T {
       }
     });
     return format;
+  }
+
+  /**
+   * 获取地址上 /？。。。#/ 间的数据
+   * @param [key] 获取此字段的数据 不传返回包含所有数据的对象
+   * */
+  getQuery(key) {
+    let query = {};
+    location.search.slice(1).split('&').map(str => {
+      let arr = str.split('=');
+      arr[0] && (query[arr[0]] = arr[1]);
+    });
+    return key ? query[key] : query;
   }
 
 }

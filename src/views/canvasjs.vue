@@ -12,7 +12,6 @@
       return {
         canvas: null,
         srcs: [],
-        src1: '',
       }
     },
     methods: {
@@ -26,8 +25,8 @@
         background: '#fafafa'
       });
 
-      for (let i = 13, j = i, count = 3, r = 60; i < j + count; i++) {
-        ['', 'hollow', 'line'].map((type, ind) => {
+      for (let i = 6, j = i, count = 2, r = 60; i < j + count; i++) {
+        ['', 'line'].map((type, ind) => {
           this.canvas.stars({
             count: i,
             angle: -90,

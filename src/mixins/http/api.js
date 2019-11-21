@@ -1,5 +1,7 @@
 const urlList = {
-  getList: '/list'
+  getList: '/list',
+  getWxUserInfo: 'wxcat/api/get_wx_userinfo_reg', // 获取微信用户信息
+  setWxConfig: 'wxcat/api/get_sign', // 微信js-sdk设置config
 };
 
 const apiList = {};
