@@ -1,12 +1,12 @@
 class Canvas {
   constructor(config) {
     this.$unit = config.unit || 'px';
-    let $el = config.$el;
+    let $el = config.$el || document.createElement('div');
     $el.innerHTML = '';
     let $canvas = document.createElement('canvas');
     let $cxt = $canvas.getContext('2d');
-    $canvas.width = $el.offsetWidth;
-    $canvas.height = $el.offsetHeight;
+    $canvas.width = $el.offsetWidth || $canvas.width;
+    $canvas.height = $el.offsetHeight || $canvas.height;
     $cxt.save();
 
     $cxt.fillStyle = config.background;
@@ -20,10 +20,24 @@ class Canvas {
       $el: {value: $el},
       $canvas: {value: $canvas},
       $cxt: {value: $cxt},
+      $config: {value: config},
       $history: {value: []},
       $id: {value: $el.id || config.id || ('cvs_' + (Math.random() * 10000 | 0))},
     });
-    console.log(this);
+  }
+
+  clear(){
+    let $cxt = this.$cxt;
+    let $canvas = this.$canvas;
+    let config = this.$config;
+    $cxt.clearRect(0, 0, $canvas.width, $canvas.height);
+    $cxt.save();
+
+    $cxt.fillStyle = config.background;
+    config.background && $cxt.rect(0, 0, $canvas.width, $canvas.height);
+    $cxt.fill();
+
+    $cxt.restore();
   }
 
   saveHistory(arr, fn, type) {

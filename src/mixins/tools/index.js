@@ -219,6 +219,41 @@ class T {
     return key ? query[key] : query;
   }
 
+  /**
+   * base64图片转File对象
+   * @param {string} baseStr: 图片base64编码
+   * @param filename: 转换后文件名，true:生成随机名字
+   * */
+
+  base2img(baseStr, filename = true) {
+    let arr = baseStr.split(','),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    filename === true && (filename = `file_${(Math.random() * 9999) | 0}.${mime.split('/')[1]}`);
+    return new File([u8arr], filename, {type: mime});
+  }
+
+  /**
+   * 图片转base64
+   * @param file: 要编码的图片
+   * @return: Promise
+   * */
+
+  img2base(file) {
+    return new Promise(res => {
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = r => {
+        res(r.target.result);
+      };
+    });
+  }
+
 }
 
 export default new T();
