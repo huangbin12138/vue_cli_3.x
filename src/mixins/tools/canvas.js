@@ -5,8 +5,8 @@ class Canvas {
     $el.innerHTML = '';
     let $canvas = document.createElement('canvas');
     let $cxt = $canvas.getContext('2d');
-    $canvas.width = $el.offsetWidth || $canvas.width;
-    $canvas.height = $el.offsetHeight || $canvas.height;
+    $canvas.width = $el.offsetWidth || config.width || 1000;
+    $canvas.height = $el.offsetHeight || config.height || 1000;
     $cxt.save();
 
     $cxt.fillStyle = config.background;

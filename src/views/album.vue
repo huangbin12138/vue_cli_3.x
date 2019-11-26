@@ -1,10 +1,10 @@
 <template>
-  <div class="">
-         <!--@touchstart.prevent="start = true"-->
-         <!--@touchend.prevent="start = false"-->
-         <!--@touchmove.prevent="move"-->
+  <div class="vw100 vh100 bsb"
+       @mousewheel.prevent="mouseWheel"
+       @touchstart.prevent="startMove"
+       @touchend.prevent="endMove"
+       @touchmove.prevent="touchMove">
     <div class="albums abs-mc csp"
-         @mousewheel.prevent="mouseWheel"
          @mousedown.prevent="start = true"
          @mouseup.prevent="start = false"
          @mousemove.prevent="move">
@@ -20,12 +20,11 @@
              backgroundImage: `url(${album.src})`,
              opacity: 1 * ((i / 6) < times)
              }"
-             @dblclick="changeImg(album)"
+             @dblclick.stop.prevent="changeImg(album)"
              v-for="(album, i) in albums" :key="i">
         </div>
       </div>
     </div>
-    <div class="canvasjs pof" ref="canvas"></div>
     <input type="file" class="ovh w0 h0" ref="file" @change="fileChange" accept="image/*">
   </div>
 </template>
@@ -38,11 +37,13 @@
         albums: [],
         photo: {},
         start: false,
-        size: 300,
+        size: 100,
         translate: 150,
         times: 1,
         rotate: [0, 0, 0, 0],
         rotateStr: '',
+        pageXY: [],
+        touchLength: 0,
       }
     },
     watch: {
@@ -64,7 +65,7 @@
 
       },
       changeImg(item) {
-        if (this.start) return;
+        if (this.start && !this.count) return;
         this.photo = item;
         this.$refs.file.click();
       },
@@ -82,9 +83,48 @@
 
         this.translate *= this.times;
       },
-      startMove(e) {
+      startMove(e, album) {
+        console.log(e);
+        this.touchLength++;
+        this.start = true;
+        this.pageXY = [];
+        let {targetTouches} = e;
+        for (let ind in targetTouches) {
+          if (!isNaN(ind)) {
+            let item = targetTouches[ind];
+            this.pageXY.push(item.pageX, item.pageY);
+          }
+        }
       },
       endMove(e) {
+        this.start = false;
+        this.touchLength = 0;
+      },
+      touchMove(e) {
+        if (this.start) {
+          let {targetTouches, changedTouches} = e;
+          let [x, y, z, deg] = this.rotate;
+
+          if (this.touchLength === 1) {
+            let {pageX: px, pageY: py} = targetTouches[0];
+            let [sx, sy] = this.pageXY;
+            x -= py - sy;
+            y += px - sx;
+            this.pageXY = [px, py];
+            this.rotate = [x % 360, y % 360];
+          } else if (this.touchLength === 2) {
+            let [x1, y1, x2, y2] = this.pageXY;
+            console.log(targetTouches, this.touchLength);
+            let {pageX: tx1, pageY: ty1} = targetTouches[0];
+            let {pageX: tx2, pageY: ty2} = targetTouches[1];
+            let sDistance = (x2 - x1) ** 2 + (y2 - y1) ** 2;
+            let distance = (tx2 - tx1) ** 2 + (ty2 - ty1) ** 2;
+            if (sDistance) {
+              this.pageXY = [];
+              this.mouseWheel({wheelDelta: distance - sDistance});
+            }
+          }
+        }
       },
       move(e) {
         if (this.start) {
@@ -125,7 +165,6 @@
     mounted() {
       for (let i = 6, j = i, count = 12, r = this.size; i < j + count; i++) {
         let canvas = this.tools.createCanvas({
-          $el: this.$refs.canvas,
           background: this.tools.rColor(200, 255)
         });
         ['', 'line'].map((type, ind) => {
@@ -150,14 +189,6 @@
 </script>
 
 <style scoped lang="less">
-  .canvasjs {
-    opacity: 0;
-    left: -100vw;
-    top: -100vh;
-    width: 1000px;
-    height: 1000px;
-  }
-
   .box {
     transform-style: preserve-3d;
   }
