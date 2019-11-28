@@ -21,6 +21,7 @@
              opacity: 1 * ((i / 6) < times)
              }"
              @dblclick.stop.prevent="changeImg(album)"
+             @touchstart.stop.prevent="startMove($event, album)"
              v-for="(album, i) in albums" :key="i">
         </div>
       </div>
@@ -37,13 +38,14 @@
         albums: [],
         photo: {},
         start: false,
-        size: 100,
-        translate: 150,
+        size: 150,
+        translate: 0,
         times: 1,
         rotate: [0, 0, 0, 0],
         rotateStr: '',
         pageXY: [],
         touchLength: 0,
+        timer: null,
       }
     },
     watch: {
@@ -60,12 +62,11 @@
         let file = files[0];
         if (file) {
           console.log(file);
+          this.photo.src || this.albums.push({});
           this.tools.img2base(file).then(src => this.photo.src = src).catch(console.log)
         }
-
       },
       changeImg(item) {
-        if (this.start && !this.count) return;
         this.photo = item;
         this.$refs.file.click();
       },
@@ -84,6 +85,9 @@
         this.translate *= this.times;
       },
       startMove(e, album) {
+        if (album) {
+          this.timer = setTimeout(this.changeImg, 500, album);
+        }
         console.log(e);
         this.touchLength++;
         this.start = true;
@@ -99,8 +103,12 @@
       endMove(e) {
         this.start = false;
         this.touchLength = 0;
+        clearTimeout(this.timer);
+        this.timer = null;
       },
       touchMove(e) {
+        clearTimeout(this.timer);
+        this.timer = null;
         if (this.start) {
           let {targetTouches, changedTouches} = e;
           let [x, y, z, deg] = this.rotate;
@@ -116,7 +124,7 @@
             let [x1, y1, x2, y2] = this.pageXY;
             console.log(targetTouches, this.touchLength);
             let {pageX: tx1, pageY: ty1} = targetTouches[0];
-            let {pageX: tx2, pageY: ty2} = targetTouches[1];
+            let {pageX: tx2, pageY: ty2} = targetTouches[1] || {};
             let sDistance = (x2 - x1) ** 2 + (y2 - y1) ** 2;
             let distance = (tx2 - tx1) ** 2 + (ty2 - ty1) ** 2;
             if (sDistance) {
@@ -163,26 +171,25 @@
       }
     },
     mounted() {
-      for (let i = 6, j = i, count = 12, r = this.size; i < j + count; i++) {
-        let canvas = this.tools.createCanvas({
-          background: this.tools.rColor(200, 255)
-        });
-        ['', 'line'].map((type, ind) => {
-          canvas.stars({
-            count: i,
-            angle: -90,
-            type,
-            r,
-            x: r,
-            y: r,
-            color: this.tools.rColor(80, 180),
-          });
-          this.albums.push({
-            src: canvas.getSrc('png', 0, 0, 2 * r, 2 * r),
-          });
-        });
-      }
-      this.rotate = [-30, -30];
+      // for (let i = 3, j = i, count = 12, r = this.size; i < j + count; i++) {
+      //   let canvas = this.tools.createCanvas({
+      //     background: this.tools.rColor(180, 255)
+      //   });
+      //   canvas.stars({
+      //     count: i,
+      //     angle: -90,
+      //     type: 'line',
+      //     r,
+      //     x: r,
+      //     y: r,
+      //     color: this.tools.rColor(80, 160),
+      //   });
+      //   this.albums.push({
+      //     src: canvas.getSrc('png', 0, 0, 2 * r, 2 * r),
+      //   });
+      // }
+      this.albums.push({});
+      this.rotate = [0, 0];
       this.translate = this.size / 2;
     },
   }
@@ -197,5 +204,21 @@
     perspective: 1000px;
     background: no-repeat center center / 100%;
     transition: .3s linear;
+    &:last-child {
+      border-radius: 1rem;
+      box-shadow: 0 0 .5rem rgb(100, 150, 200);
+      &:after {
+        content: '+';
+        font-size: 6rem;
+        line-height: 1;
+        color: transparent;
+        font-weight: bold;
+        text-shadow: 0 0 .5rem rgba(100, 150, 200, .5);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
   }
 </style>
