@@ -3,8 +3,7 @@
     <input v-model="search" type="text" class="gl-input search tac pos t0 w100 bsb" placeholder="关键字搜索"/>
     <div class="err-code mlr-auto">
       <div class="flex jcb item tal"
-           v-for="item in list" :key="item.code"
-           v-if="!search || testSearch(item)">
+           v-for="item in list" :key="item.code">
         <div class="code flex-1">{{item.code}}</div>
         <div class="msg flex-3">{{item.msg}}</div>
         <div class="remark flex-3">{{item.remark}}</div>
@@ -19,7 +18,8 @@
     data() {
       return {
         search: '',
-        list: [
+        list: [],
+        allList: [
           {code: "40001", msg: "invalid credential", remark: "不合法的调用凭证"},
           {code: "40002", msg: "invalid grant_type", remark: "不合法的grant_type"},
           {code: "40003", msg: "invalid openid", remark: "不合法的OpenID"},
@@ -93,12 +93,19 @@
         ]
       }
     },
-    methods: {
-      testSearch(item) {
-        let {search} = this;
-        return item.code.indexOf(search) > -1 || item.msg.indexOf(search) > -1 || item.remark.indexOf(search) > -1;
+    watch: {
+      search(val) {
+        if (val) {
+          this.list = this.allList.filter(item => Object.values(item).join(',$,$,').indexOf(val) > -1);
+        } else {
+          this.list = [...this.allList];
+        }
       },
     },
+    created() {
+      this.list = [...this.allList];
+    },
+    methods: {},
   }
 </script>
 
@@ -109,6 +116,7 @@
     background-color: rgba(255, 255, 255, .7);
     border-bottom: .06rem #f5f5f5 solid;
   }
+
   .err-code {
     max-width: 50rem;
     font-size: 1rem;

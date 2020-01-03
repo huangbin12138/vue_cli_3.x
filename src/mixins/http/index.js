@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs';
 import apiList from './api';
 import Sign from './sign';
 
@@ -79,6 +80,7 @@ class Index {
     let {isSign, loading, resDataKey} = initConfig(config);
     isSign && (params = sign.encode(params));
     loading && load.open();
+    // params = qs.stringify(params);
     return axios[method](url, params, config).then(res => {
       let result = isSign ? sign.decode(res.data) : res.data;
       if (isSuccessRes(result)) {

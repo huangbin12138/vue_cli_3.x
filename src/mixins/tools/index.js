@@ -1,4 +1,5 @@
 import Canvas from './canvas'
+import JSZip from 'jszip'
 
 class T {
   /**
@@ -224,7 +225,6 @@ class T {
    * @param {string} baseStr: 图片base64编码
    * @param filename: 转换后文件名，true:生成随机名字
    * */
-
   base2img(baseStr, filename = true) {
     let arr = baseStr.split(','),
       mime = arr[0].match(/:(.*?);/)[1],
@@ -243,7 +243,6 @@ class T {
    * @param file: 要编码的图片
    * @return: Promise
    * */
-
   img2base(file) {
     return new Promise(res => {
       let reader = new FileReader();
@@ -254,6 +253,131 @@ class T {
     });
   }
 
+  /**
+   * @desc 数字格式化为货币形式 100000.5 -> 100,000.50
+   * @func
+   * @params {number/string} number 要格式化数字
+   * @params {number} points 保留小数点位数
+   * @params {number} count 整数部分每位长度
+   * @params {string} separator 分隔符
+   * @returns {string/number}
+   * */
+  moneyNumber(number = 0, points = 0, count = 3, separator = ',') {
+    if (isNaN(number)) return number;
+    let str = '';
+    let point = (number % 1).toFixed(points).slice(1);
+    number = Math.floor(number) + '';
+    let y = count - number.length % count;
+    number = separator.repeat(y) + number;
+    str = number.match(new RegExp(`[^]{${count}}`, 'g'));
+    str = str ? str.join(separator).split(separator).filter(e => !!e).join(separator) : '';
+    return str + point;
+  }
+
+  /**
+   * @desc 返回当前日期的相对时间段
+   * @function
+   * @params {number/string} val:
+   *         类型 n(近n天) , tm(本月), ty(本年), nlm(前n月), nly(前n年), nm(近n月), ny(近n年)
+   * @return {array} [start(00:00:00), end(23:59:59)]
+   */
+  typeToDate(val) {
+    if (typeof val !== 'number' && typeof val !== 'string') return [,];
+    let start = new Date();
+    let end = new Date();
+    let num = parseInt(val);
+    if (!isNaN(val)) {
+      // 近num天 num
+      val && start.setDate(start.getDate() - num);
+    } else if (/tm$/i.test(val)) {
+      // 本月 tm
+      start.setDate(1);
+      end.setMonth(end.getMonth() + 1);
+      end.setDate(0);
+    } else if (/ty$/i.test(val)) {
+      // 本年 ty
+      start.setMonth(0);
+      start.setDate(1);
+      end.setMonth(11);
+      end.setDate(31);
+    } else if (/l$/i.test(val)) {
+      // 前num天 nl
+      end.setDate(end.getDate() - 1);
+      start.setDate(start.getDate() - num);
+    } else if (/lm$/i.test(val)) {
+      // 前num个月 nlm
+      end.setDate(0);
+      start.setMonth(start.getMonth() - num);
+      start.setDate(1);
+    } else if (/ly$/i.test(val)) {
+      // 前num年 nly
+      end.setMonth(-1);
+      end.setDate(31);
+      start.setFullYear(start.getFullYear() - num);
+      start.setMonth(0);
+      start.setDate(1);
+    } else if (/m$/i.test(val)) {
+      // 近num月 nm
+      start.setMonth(start.getMonth() - num);
+    } else if (/y$/i.test(val)) {
+      // 近num年 ny
+      start.setFullYear(start.getFullYear() - num);
+    }
+    let arr = [start, end];
+    arr = arr.map((d, i) => new Date(this.formatDate(d, 'Y-M-D ' + (!i ? '00:00:00' : '23:59:59'))));
+    return arr;
+  }
+
+  /**
+   * 下载文件
+   * @param {string} name 下载后文件名
+   * @param {string} src 文件路径
+   * */
+  download(name, src) {
+    let a = document.createElement('a');
+    if (typeof src === 'string') {
+      a.href = src;
+    } else {
+      a.href = URL.createObjectURL(src);
+    }
+    a.download = name || '';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  /**
+   * 打包下载图片
+   * @param {string} name 下载后文件名
+   * @param {Array} srcList 文件路径
+   * @param {array} names 图片名称列表
+   * */
+  zipDownload(name, srcList = [], names = []) {
+    let zip = new JSZip();
+    let count = 0;
+    return new Promise((res, req) => {
+      srcList.map((src, i) => {
+        let image = new Image();
+        image.src = src;
+        image.onload = () => {
+          let canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          let context = canvas.getContext('2d');
+          context.drawImage(image, 0, 0, image.width, image.height);
+          let url = canvas.toDataURL();
+          zip.file(names[i] || '', url.split(',').pop(), {base64: true});
+          count++;
+          if (count >= srcList.length) {
+            zip.generateAsync({type: 'blob'}).then(content => {
+              // see FileSaver.js
+              res(content);
+            });
+          }
+        }
+      });
+    });
+  }
 }
 
 export default new T();
