@@ -17,17 +17,19 @@ class DB {
 
   clear() {
     this.sql = '';
+    this.condition = '';
+    this.table = this.mysql.table;
     return this;
   }
 
-  send() {
+  send(sql) {
     const conn = MYSQL.createConnection(this.mysql);
     conn.connect();
+    console.log(sql || this.sql);
     return new Promise((res, req) => {
-      conn.query(this.sql, (e, r) => {
+      conn.query(sql || this.sql, (e, r) => {
         if (e) {
-          req({code: 50001, msg: 'sql语句错误', data: e});
-          // req({code: 50001, msg: 'sql语句错误', data: e.sqlMessage});
+          req({code: +e.sqlState || 50001, msg: e.sqlMessage.split(';')[0] || 'sql语句错误', data: e});
         } else {
           res(r);
         }
@@ -36,7 +38,7 @@ class DB {
     });
   }
 
-  createTable(name) {
+  createTable(name, COMMENT) {
     this.table = name;
     this.columns = this.columns || [];
     let columnsStr = [];
@@ -62,10 +64,17 @@ class DB {
         !!+authStr[3] && (auth += ' NOT NULL'); // ***1 非空
       }
 
-      columnsStr.push(`${column.name} ${type} ${auth}`);
+      if (column.defaultValue) {
+        column.defaultValue = `DEFAULT ${column.defaultValue}`;
+      }
+      if (column.remark) {
+        column.remark = `COMMENT \'${column.remark}\'`;
+      }
+
+      columnsStr.push(`\`${column.name}\` ${type} ${auth} ${column.defaultValue || ''} ${column.remark || ''}`);
     });
 
-    this.sql = `CREATE TABLE ${name}(${columnsStr.join(',')})ENGINE=InnoDB DEFAULT CHARSET=utf8`;
+    this.sql = `CREATE TABLE \`${name}\`(${columnsStr.join(',')})ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='${COMMENT || ''}'`;
     return this.send();
   }
 
@@ -85,9 +94,18 @@ class DB {
     return this;
   }
 
+  orderBy(by) {
+    this.orderByStr = this.orderByStr || [];
+    this.orderByStr.push(...by.replace(/^\s*|\s*$/ig, '').split(/\s*,\s*/ig));
+  }
+
+  groupBy(column) {
+    this.groupByStr = column;
+  }
+
   and(condition) {
     if (this.condition && condition) {
-      this.condition = `(${this.condition}) && (${condition})`;
+      this.condition = `(${this.condition}) AND (${condition})`;
     } else {
       this.condition = condition || '';
     }
@@ -96,7 +114,7 @@ class DB {
 
   or(condition) {
     if (this.condition && condition) {
-      this.condition = `(${this.condition}) || (${condition})`;
+      this.condition = `(${this.condition}) OR (${condition})`;
     } else {
       this.condition = condition || '';
     }
@@ -107,9 +125,52 @@ class DB {
     if (!columns) {
       columns = '*';
     } else {
-      columns = `(${columns.replace(/\s+/ig, ' AS ')})`
+      columns = columns.replace(/\s+/ig, ' AS ')
     }
     this.sql = `SELECT ${columns} FROM ${this.table}`;
+    if (this.condition) {
+      this.sql += ' WHERE ' + this.condition;
+    }
+    if (this.orderByStr && this.orderByStr.length) {
+      this.sql += ' ORDER BY ' + this.orderByStr.join(',');
+    }
+    if (this.groupByStr) {
+      this.sql += ' GROUP BY ' + this.groupByStr;
+    }
+    return this.send();
+  }
+
+  insert(columns) {
+    let keys = [];
+    let values = [];
+    !Array.isArray(columns) && (columns = [columns]);
+    columns.map(val => {
+      keys.length || keys.push(...Object.keys(val).map(s => `\`${s}\``));
+      values.push(`(${Object.values(val).join(',')})`);
+    });
+    this.sql = `INSERT INTO ${this.table} (${keys.join(',')}) VALUES ${values.join(',')}`;
+    return this.send();
+  }
+
+  update(columns) {
+    let col = [];
+    if (typeof columns === 'string') {
+      col = columns;
+    } else {
+      Object.keys(columns).map(k => {
+        col.push(`${k}=${columns[k]}`);
+      });
+      col = col.join(',');
+    }
+    this.sql = `UPDATE ${this.table} SET ${col}`;
+    if (this.condition) {
+      this.sql += ' WHERE ' + this.condition;
+    }
+    return this.send();
+  }
+
+  delete(table = this.table) {
+    this.sql = `DELETE FROM ${table}`;
     if (this.condition) {
       this.sql += ' WHERE ' + this.condition;
     }

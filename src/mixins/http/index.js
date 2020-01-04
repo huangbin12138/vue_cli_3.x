@@ -5,12 +5,13 @@ import Sign from './sign';
 
 // axios 配置
 const axiosConfig = {
-  baseURL: '',
+  baseURL: 'http://12.12.12.58:8181/',
   timeout: 50000,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
   },
 };
+
 
 // 加/解密对象
 const sign = {
@@ -53,7 +54,7 @@ function initConfig(config) {
   let out = Object.assign({
     isSign: false, // 是否需要加密
     loading: true, // 是否显示loading
-    resDataKey: '', // 返回数据内容的key
+    resDataKey: 'data', // 返回数据内容的key
   }, axiosConfig, config);
 
   out.headers = Object.assign({
@@ -77,14 +78,15 @@ class Index {
 
   http(url = '', data = {}, config = {}, method = 'post') {
     let params = initData(data);
-    let {isSign, loading, resDataKey} = initConfig(config);
+    config = initConfig(config);
+    let {isSign, loading, resDataKey} = config;
     isSign && (params = sign.encode(params));
     loading && load.open();
     // params = qs.stringify(params);
     return axios[method](url, params, config).then(res => {
       let result = isSign ? sign.decode(res.data) : res.data;
       if (isSuccessRes(result)) {
-        return resDataKey ? result[resDataKey] : result;
+        return resDataKey ? result[resDataKey] || result : result;
       } else {
         throw result;
       }

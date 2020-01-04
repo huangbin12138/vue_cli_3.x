@@ -20,12 +20,7 @@
     methods: {
       test() {
         this.http.test('http://12.12.12.58:8181' + this.url, {
-          table: 'test_1',
-          value: [
-            {name: new Date() % 7777, remark: new Date() * 1},
-            {name: new Date() % 5555, remark: new Date() * 1},
-            {name: new Date() % 3333, remark: new Date() * 1},
-          ]
+          name: 'my_db'
         }, {}, this.method).then(console.log).catch(console.log);
       }
     },

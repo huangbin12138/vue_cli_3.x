@@ -1,1 +1,1 @@
-module.exports={"200":"成功","40001":"测试error","50001":"sql语句错误"}
+module.exports={"200":"成功","40001":"测试error","42000":"Specified key was too long","50001":"sql语句错误"}

@@ -54,6 +54,19 @@ next.error = (err) => {
   });
 };
 
+const callback = async (api, data, fun) => {
+  try {
+    if (api[fun]) {
+      let res = await api[fun](data, next);
+      next(res);
+    } else {
+      next.notFind();
+    }
+  } catch (e) {
+    next.error(e);
+  }
+};
+
 http.createServer((req, res) => {
   let {body: data, url, headers, method, domain} = req;
   let path = url.slice(1).split('?')[0].split('/');
@@ -66,7 +79,8 @@ http.createServer((req, res) => {
   }
 
   try {
-    api = require(Config.api + path.join('/') + '.js')[fun];
+    api = require(Config.api + path.join('/') + '.js');
+    api = new api();
   } catch (e) {
     next.notFind();
   }
@@ -79,12 +93,11 @@ http.createServer((req, res) => {
       let [k, v] = e.split('=');
       data[k] = v;
     });
-    api ? api(data, next) : next.notFind();
+    callback(api, data, fun);
   }
   req.on('data', params => {
     data = JSON.parse(params + '');
-    api ? api(data, next) : next.notFind();
-    console.log('data');
+    callback(api, data, fun);
   });
   req.on('end', () => {
     console.log('end');
