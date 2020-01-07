@@ -5,14 +5,14 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+const Pages = require.context('../views', true, /\.vue$/);
+
 if (process.env.NODE_ENV === 'development') {
   Vue.use(Router);
 }
 
 const routes = [];
 const resultRoutes = [];
-
-const Pages = require.context('../views', true, /\.vue$/);
 
 Pages.keys().map(path => {
   // 开始配置路由
@@ -33,6 +33,7 @@ Pages.keys().map(path => {
   });
 });
 
+// 分层
 const findParent = (parents, route) => {
   if (Array.isArray(parents) && parents.length) {
     for (let k in parents) {
@@ -53,13 +54,18 @@ const findParent = (parents, route) => {
     }
   }
 };
-
 routes.map(route => (!resultRoutes.length || !findParent(resultRoutes, route)) && resultRoutes.push(route));
 
 export default class {
   constructor(config = {}) {
   }
 
+  /**
+   * @desc 通过路由对象的name属性找到对应路由
+   * @param {String} [name] 路由对象的名称，不传返回所有的路由包含分级
+   * @param {Function} [callback] 回调，修改当前路由配置
+   * @return {Object}
+   * */
   setRouteByName(name, callback) {
     let route = this.routes;
     if (name) {
@@ -69,15 +75,27 @@ export default class {
     return this;
   }
 
+
+  /**
+   * @desc 通过路由对象的path属性找到对应路由
+   * @param {String} [path] 路由对象的名称，不传返回所有的路由包含分级
+   * @param {Function} [callback] 回调，修改当前路由配置
+   * @return {Object}
+   * */
   setRouteByPath(path, callback) {
     let route = this.routes;
     if (path) {
-      route = this.allRoutes.find(r => r.path === path);
+      route = this.allRoutes.find(r => r.path.toLocaleLowerCase() === path.toLocaleLowerCase());
     }
     typeof callback === 'function' && callback(route);
     return this;
   }
 
+  /**
+   * @desc 添加另外的路由，
+   * @param {Array | Object} routeArr 要添加的路由[列表]
+   * @return {Object}
+   * */
   addRoutes(routeArr = []) {
     typeof routeArr === 'object' && !Array.isArray(routeArr) && (routeArr = [routeArr]);
     resultRoutes.push(...routeArr);
@@ -85,14 +103,25 @@ export default class {
     return this;
   }
 
+  /**
+   * @desc 创建router对象
+   * @param {Object} [config] 同vue-router,不包含routes对象，
+   * @return {Router}
+   * */
   createRouter(config) {
     return new Router(Object.assign({routes: this.routes}, config));
   }
 
+  /**
+   * 获取所有路由配置，不包含层级关系
+   * */
   get allRoutes() {
     return routes;
   }
 
+  /**
+   * 获取所有路由配置，包含层级关系
+   * */
   get routes() {
     return resultRoutes;
   }

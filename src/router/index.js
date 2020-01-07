@@ -25,7 +25,7 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  document.title = to.meta.title || '';
+  document.title = to.meta.title || to.name;
 });
 
 export default router;
