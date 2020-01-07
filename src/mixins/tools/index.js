@@ -127,7 +127,7 @@ class T {
     } else if (type === 'hex') {
       return color;
     } else {
-      return [r, g, b].map(e => e *= 1);
+      return [r, g, b].map(e => +e);
     }
   }
 
@@ -135,13 +135,13 @@ class T {
    * @desc 改变颜色亮度
    * @function
    * @param {string/array} color 颜色值或数组 （[r, g, b], color, #rrggbb, rgb(r, g, b)）
-   * @param {number/string} [light]=0 - 大于0 ; 小于1时变亮
+   * @param {number/string} [light]=0 - 增加色值
    * @param {string} [type]='hex' - 返回颜色值类型，可能值rgb | hex
    * @return {string/array}
    * */
   changeColor(color, light = 0, type = 'hex') {
     color = this.color2hex(color, '').map(e => {
-      e *= (1 + light);
+      e = +e + light;
       return e < 0 ? 0 : e > 255 ? 255 : e;
     });
     return this.color2hex(color, type);
@@ -377,6 +377,36 @@ class T {
         }
       });
     });
+  }
+
+  /**
+   * @desc 动态设置style css
+   * @param {Array} classArr 样式表对象
+   * @param {String} [scopedName] scoped时的名称 data-v-xxx
+   * @param {String} [styleName] 新增样式表唯一标识
+   * */
+  addStyleSheet(classArr = [], scopedName = '', styleName = 'add-style-sheet') {
+    let style = document.querySelector(`[${styleName}]`);
+    if (!style) {
+      style = document.createElement('style');
+      style.setAttribute(styleName, '');
+      style.type = 'text/css';
+    }
+    let html = style.innerHTML;
+    classArr.map(obj => {
+      let reg = new RegExp(`${obj.name}[${scopedName}]{`.replace(/[._\-[{\]\}]/gi, s => '\\' + s) + '[^}]*}', 'ig');
+      html = html.replace(reg, '');
+      html += `${obj.name}[${scopedName}]{`;
+      obj.style && Object.keys(obj.style).map(key => {
+        html += key.replace(/[A-Z]/g, s => '-' + s.toLocaleLowerCase()) + ':';
+        html += obj.style[key] + ';';
+      });
+      html += '}';
+    });
+    style.innerHTML = html;
+    document.getElementsByTagName('head')[0].appendChild(style);
+    console.dir(style);
+    return style;
   }
 }
 

@@ -1,9 +1,8 @@
 <template>
   <div class="d-b pt20 tal w50 mlr-auto">
-    <gl-button class="mb20">添加表格</gl-button>
-
-    <gl-table :list="list" :columns="columns">
-    </gl-table>
+    <gl-button class="mb20" type="primary" color="" @click="show = true">添加表格</gl-button>
+    <gl-popup v-model="show" content="这是一段文字" @sure="show = false"></gl-popup>
+    <gl-table :list="list" :columns="columns"></gl-table>
   </div>
 </template>
 
@@ -14,6 +13,7 @@
       return {
         url: '/sql/table/',
         method: 'post',
+        show: false,
         list: [],
         columns: [
           {label: '表格名称', prop: 'name'},
