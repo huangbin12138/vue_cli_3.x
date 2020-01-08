@@ -67,9 +67,9 @@ export default class {
    * @return {Object}
    * */
   setRouteByName(name, callback) {
-    let route = this.routes;
+    let route = resultRoutes;
     if (name) {
-      route = this.allRoutes.find(r => r.name === name);
+      route = routes.find(r => r.name === name);
     }
     typeof callback === 'function' && callback(route);
     return this;
@@ -83,9 +83,9 @@ export default class {
    * @return {Object}
    * */
   setRouteByPath(path, callback) {
-    let route = this.routes;
+    let route = resultRoutes;
     if (path) {
-      route = this.allRoutes.find(r => r.path.toLocaleLowerCase() === path.toLocaleLowerCase());
+      route = routes.find(r => r.path.toLocaleLowerCase() === path.toLocaleLowerCase());
     }
     typeof callback === 'function' && callback(route);
     return this;
@@ -109,20 +109,20 @@ export default class {
    * @return {Router}
    * */
   createRouter(config) {
-    return new Router(Object.assign({routes: this.routes}, config));
+    return new Router(Object.assign({routes: resultRoutes}, config));
   }
 
   /**
    * 获取所有路由配置，不包含层级关系
    * */
   get allRoutes() {
-    return routes;
+    return JSON.parse(JSON.stringify(routes));
   }
 
   /**
    * 获取所有路由配置，包含层级关系
    * */
   get routes() {
-    return resultRoutes;
+    return JSON.parse(JSON.stringify(resultRoutes));
   }
 };
