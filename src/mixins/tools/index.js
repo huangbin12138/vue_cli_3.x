@@ -156,6 +156,7 @@ class T {
    */
   formatDate(number, format = 'Y-MM-DD HH:mm:ss') {
     let time = number instanceof Date ? number : !isNaN(number) ? new Date(number * 1000) : false;
+    if (time === false) return '';
     let obj = {
       'Y': time.getFullYear(),
       'M': time.getMonth() + 1,
