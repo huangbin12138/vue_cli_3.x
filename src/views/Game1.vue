@@ -62,12 +62,13 @@
     methods: {
       getResult(count, a = 'a', c = 'c') {
         let res = [];
-        // debugger;
         if (count > 0) {
           let b = ['a', 'b', 'c'].find(s => s !== a && s !== c);
-          res.push(...this.getResult(count - 1, a, b)); // count - 1, a -> b
-          res.push([a, c]); // a -> c
-          res.push(...this.getResult(count - 1, b, c)); // count - 1, b -> c
+          count--;
+          // 1、上面count - 1 个：a -> b;
+          // 2、最后一个 a -> c;
+          // 3、上面count - 1 个：b -> c;
+          res.push(...this.getResult(count, a, b), [a, c], ...this.getResult(count, b, c));
         }
         return res;
       },
