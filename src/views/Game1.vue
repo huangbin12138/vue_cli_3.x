@@ -63,11 +63,7 @@
       getResult(count, a = 'a', c = 'c') {
         let res = [];
         // debugger;
-        if (count === 1) {
-          res.push([a, c]);
-        } else if (count < 1) {
-          // do not thing
-        } else {
+        if (count > 0) {
           let b = ['a', 'b', 'c'].find(s => s !== a && s !== c);
           res.push(...this.getResult(count - 1, a, b)); // count - 1, a -> b
           res.push([a, c]); // a -> c
