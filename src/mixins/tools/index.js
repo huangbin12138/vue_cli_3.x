@@ -409,6 +409,23 @@ class T {
     console.dir(style);
     return style;
   }
+
+  /**
+   * 复制文本到剪切板
+   * @param {String | number} text 要复制的文本
+   * @return Boolean
+   * */
+  copyText(text) {
+    let input = document.createElement('input');
+    input.style.position = 'fixed';
+    input.style.top = '-1000px';
+    document.body.appendChild(input);
+    input.value = text;
+    input.select();
+    let res = document.execCommand('copy');
+    document.body.removeChild(input);
+    return res;
+  }
 }
 
 export default new T();

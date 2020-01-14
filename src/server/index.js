@@ -40,17 +40,22 @@ const next = (data = {}, config = {}) => {
   if (writeHeadCode === 404) {
     outString = '<h1 style="color: red"><b><i>404 NOT FOUND!</i></b></h1>'
     // outString = ''
+  } else if(writeHeadCode === 500){
+    outString = data.data;
+
   }
   res.end(outString);
 };
 next.notFind = () => {
   next('', {
     writeHeadCode: 404,
+    'Content-Type': 'text/html',
   });
 };
 next.error = (err) => {
   next(err, {
     writeHeadCode: 500,
+    'Content-Type': 'text/html',
   });
 };
 

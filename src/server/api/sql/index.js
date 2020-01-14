@@ -24,7 +24,7 @@ module.exports = class {
     let {name, columns, remark, logName, admin_id} = data;
     db.clear();
     await db.setTableColumns(columns).createTable(name, remark);
-    await this.addSqlLog({name: logName, sql: db.sql, admin_id});
+    return await this.addSqlLog({name: logName, sql: db.sql, admin_id});
   }
 
   async addSqlLog(data, next) {

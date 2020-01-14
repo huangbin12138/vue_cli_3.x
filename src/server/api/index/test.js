@@ -7,17 +7,19 @@ function index(data, next, obj = {}) {
       value.__methods.push(i);
     }
   }
-  next(value);
+  return value;
 }
 
-module.exports = {
-  req(data, next) {
-    index(data, next, next.req);
-  },
+module.exports = class {
+  async req(data, next) {
+    return index(data, next, next.req);
+  }
+
   res(data, next) {
-    index(data, next, next.res);
-  },
+    return index(data, next, next.res);
+  }
+
   index(data, next) {
-    next(data);
-  },
+    return data;
+  }
 };
