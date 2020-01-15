@@ -139,7 +139,7 @@ Pages.keys().map(path => {
 });
 
 routes.map(route => delete route.___); // 去掉多余属性
-console.log(resultRoutes);
+// console.log(resultRoutes);
 
 export default class {
   constructor(config = {}) {

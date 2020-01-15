@@ -26,7 +26,7 @@
         type: Object,
         default() {
           return {
-            src: require('../assets/ttt.jpg'),
+            src: require('@/assets/ttt.jpg'),
             // src: require('../assets/tl.jpg'),
             // src: require('../assets/tf.jpg'),
             width: 256,

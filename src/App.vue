@@ -1,11 +1,5 @@
 <template>
   <div id="app">
-    <div id="nav" class="unselect">
-      <template v-for="(path, i) in list">
-        <router-link class="nav-item" :to="path.path" :key="i">{{path.name}}</router-link>
-        <span v-show="i !== list.length - 1"> | </span>
-      </template>
-    </div>
     <router-view/>
   </div>
 </template>
@@ -15,7 +9,6 @@
     name: 'App',
     data() {
       return {
-        list: this.$store.getters.menu,
       }
     },
   }

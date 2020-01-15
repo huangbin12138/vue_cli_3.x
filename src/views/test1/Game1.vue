@@ -54,6 +54,7 @@
       },
     },
     created() {
+
     },
     mounted() {
       this.W = this.$refs.boxa[0].offsetWidth - 40;

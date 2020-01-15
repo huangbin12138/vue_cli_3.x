@@ -3,8 +3,7 @@ import Router from './automation-router';
 
 let myRouter = new Router();
 
-myRouter.setRouteByName('DB', route => {
-  console.log(route);
+myRouter.setRouteByName('Test1DB', route => {
   route.meta.title = 'DBDBDB';
 }).addRoutes([
   {

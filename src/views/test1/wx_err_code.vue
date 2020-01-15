@@ -125,6 +125,7 @@
   }
 
   .item {
+    align-items: center;
     padding: 0 10px;
     background-color: #fff;
     &:nth-child(2n) {
