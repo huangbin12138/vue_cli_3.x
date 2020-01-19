@@ -1,9 +1,12 @@
 <template>
   <div class="mysql pt20 tal w50 mlr-auto">
-    method: <input type="text" class="gl-input mb20" v-model="method" placeholder="method">
-    <br>
-    url: <input type="text" class="gl-input mb20" v-model="url" placeholder="url">
-    <br>
+    method: <input class="gl-input vam" v-model="method" placeholder="method">
+    <div class="mb10"></div>
+    data: <textarea rows="2" class="gl-textarea gl-input vam w66" v-model="data" placeholder="method"></textarea>
+    <br class="mb10">
+    <div class="mb10"></div>
+    url: <textarea rows="2" class="gl-textarea gl-input vam w66" v-model="url" placeholder="url"></textarea>
+    <div class="mb10"></div>
     <span class="test csp fs24 lh24" @click="test">send</span>
   </div>
 </template>
@@ -13,19 +16,18 @@
     name: "Mysql",
     data() {
       return {
-        url: '/sql/table/',
+        url: 'http://12.12.12.57:4003/php/opening/upload.Qupload/del_file',
         method: 'post',
+        data: '{"key":"media/55125e1ecccea3083.mp3","bucket":"iexue"}',
       }
     },
     methods: {
       test() {
-        this.http.test('http://12.12.12.58:8181' + this.url, {
-          name: 'my_db'
-        }, {}, this.method).then(console.log).catch(console.log);
+        this.http.test(this.url, JSON.parse(this.data), {}, this.method).then(console.log).catch(console.log);
       }
     },
     created() {
-      this.test();
+      // this.test();
     },
   }
 </script>

@@ -82,7 +82,7 @@ class Index {
     let {isSign, loading, resDataKey} = config;
     isSign && (params = sign.encode(params));
     loading && load.open();
-    // params = qs.stringify(params);
+    params = qs.stringify(params);
     return axios[method](url, params, config).then(res => {
       let result = isSign ? sign.decode(res.data) : res.data;
       if (isSuccessRes(result)) {

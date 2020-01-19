@@ -15,10 +15,10 @@
     name: "index",
     data() {
       return {
-        list: this.$store.getters.menu[1].children,
+        list: this.$store.getters.menu.find(e => e.name === 'Test1').children,
       }
     },
-    created(){
+    created() {
       // console.log(this.list);
     },
   }
