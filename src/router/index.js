@@ -8,7 +8,7 @@ myRouter.setRouteByName('Test1DB', route => {
 }).addRoutes([
   {
     path: '*',
-    redirect: myRouter.routes[0]
+    redirect: '/menu'
   },
 ]);
 

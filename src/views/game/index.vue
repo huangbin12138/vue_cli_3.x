@@ -1,6 +1,6 @@
 <template>
   <div class="index1">
-    <my-nav name="Test1"></my-nav>
+    <my-nav name="Game"></my-nav>
     <router-view/>
   </div>
 </template>
@@ -10,7 +10,7 @@
     name: "index",
     data() {
       return {
-        list: this.$store.getters.menu.find(e => e.name === 'Test1').children,
+        list: this.$store.getters.menu.find(e => e.name === 'Game').children,
       }
     },
     created() {
