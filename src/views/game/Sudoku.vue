@@ -1,7 +1,7 @@
 <template>
   <div class="sudoku pt10 unselect por">
     <div class="div">
-      <input type="text" v-model.number="questionLength" @change="createQuestion(questionLength)">
+      <!--<input type="text" v-model.number="questionLength" @change="createQuestion(questionLength)">-->
     </div>
     <div class="out-box dib w100 vat" ref="outBox">
       <div class="row flex fww" v-for="(inner, i) in showList" :key="i">
@@ -21,7 +21,7 @@
            :style="{maxWidth: w * 3.5 + 'px', height: w * 3.5 + 'px'}">
         <div :style="{width: w + 'px', lineHeight: w + 'px'}"
              :class="['set-num', {
-             cannot: !testNum(n, x, y),
+             cannot: !testNum(n, x, y, questionArr),
              check: showList[y][x].includes(n)
              }]"
              @click="setCell(n, x, y)"
@@ -37,9 +37,10 @@
     name: "Sudoku",
     data() {
       return {
-        questionLength: 6,
+        questionLength: 15,
         question: {},
-        answer: [],
+        questionArr: {},
+        answer: 0,
         w: 0,
 
         x: '',
@@ -48,31 +49,82 @@
       }
     },
     created() {
+      this.queStr();
       // this.dfList = this.initList(true);
-      this.showList = this.initList();
       this.createQuestion(this.questionLength);
-      // this.question = this.initList();
     },
     mounted() {
       this.w = this.$refs.outBox.offsetWidth / 9;
     },
     methods: {
+      queStr() {
+        let str = '';
+        let all = '123456789';
+        console.clear();
+        for (let i = 0; i < 81; i++) {
+          let [arr, x, y] = [str.split(''), i / 9 | 0, i % 9];
+          let row = arr.slice(x * 9);
+          let col = arr.filter((s, ind) => ind % 9 === y);
+          let add = this.tools.rString(1, '', all.split('').filter(s => ![...row, ...col].includes(s)).join(''));
+          if (add) {
+            // i++;
+            str += add;
+          } else {
+            // i--;
+            str += 0;
+          }
+          // if (!str) {
+          //   str += this.tools.rNumber(1, 9);
+          // } else {
+          //   str += this.tools.rNumber(1, 9);
+          // }
+          console.log(arr, x, y, row, col);
+        }
+        console.log(str.split('').map((s, k) => (k % 27 === 26 && k < 55) ? s + '\n' + '-'.repeat(21) + '\n' : k % 9 === 8 ? s + '\n' : k % 3 === 2 ? s + ' | ' : s + ' ').join(''));
+        return str;
+      },
       createQuestion(val = 6) {
         this.question = {};
-        for (let i = 0; i < val;) {
-          let val = +this.tools.rNumber(1, 9);
-          let x = +this.tools.rNumber(0, 8);
-          let y = +this.tools.rNumber(0, 8);
-          if (this.setCell(val, x, y, true)) {
+        let arr = new Array(9);
+        let qArr = new Array(9);
+        let vs = {};
+        let xs = {};
+        let ys = {};
+        let isSet = [];
+        let i = 0;
+        let j = 0;
+        '123456789'.split('').map((v, ind) => {
+          vs[v] = 0;
+          xs[ind] = 0;
+          ys[ind] = 0;
+        });
+        for (; i < val;) {
+          j++;
+          let val = +this.tools.rString(1, '', Object.keys(vs).filter(k => vs[k] < 9).join(''));
+          let x = +this.tools.rString(1, '', Object.keys(xs).filter(k => xs[k] < 9).join(''));
+          let y = +this.tools.rString(1, '', Object.keys(ys).filter(k => ys[k] < 9).join(''));
+          if (isSet.includes('' + x + y)) continue;
+          if (this.testNum(val, x, y, arr)) {
             this.question[x] = this.question[x] || {};
             this.question[x][y] = val;
+            arr[y] = arr[y] || new Array(9);
+            arr[y][x] = [val];
+            qArr[x] = qArr[x] || new Array(9);
+            qArr[x][y] = [val];
+
             i++;
+            vs[val]++;
+            xs[x]++;
+            ys[y]++;
+            isSet.push('' + x + y);
           }
         }
+        // console.log(j);
+        this.answer = i;
+        this.questionArr = qArr;
         this.showList = this.initList(this.question);
       },
-      testNum(val, x, y) {
-        let {showList} = this;
+      testNum(val, x, y, showList = this.showList) {
         let [x1, x2] = [x - 2, x - 1, x, x + 1, x + 2].splice(2 - x % 3, 3).filter(n => n !== x);
         let [y1, y2] = [y - 2, y - 1, y, y + 1, y + 2].splice(2 - y % 3, 3).filter(n => n !== y);
 
@@ -90,7 +142,7 @@
 
         showList.map((e, i) => {
           i === y && (row.push(...e.filter(num => num.length === 1).map(num => num[0])));
-          e[x].length === 1 && col.push(e[x][0]);
+          e[x] && e[x].length === 1 && col.push(e[x][0]);
         });
 
         return !row.includes(val) && !col.includes(val) && !rect.includes(val);
@@ -103,7 +155,10 @@
         } else if (this.testNum(val, x, y) && (!only || !arr.length)) {
           arr.push(val);
           arr.sort((a, b) => a - b);
-          return true;
+        }
+        !arr.length ? this.answer-- : (arr.length === 1 && this.answer++);
+        if (this.answer === 81) {
+          console.log('success');
         }
       },
       checkCell(x, y, isQue) {
