@@ -20,6 +20,7 @@ const vuexPersisted = new createPersistedState({
     let saveObj = {};
     [
     //
+        'sanGuoKillList',
     ].map(key => {
       saveObj[key] = state[key];
     });

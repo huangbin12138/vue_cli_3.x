@@ -42,7 +42,7 @@ module.exports = {
    * 开发服务器 相关配置
    * */
   devServer: {
-    host: '12.12.12.58',
+    host: '127.0.0.1',
     port: '8282',
     // proxy: {}, // 代理
   },
