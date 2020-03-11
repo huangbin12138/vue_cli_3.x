@@ -1,5 +1,8 @@
 import store from '../store';
 import Router from './automation-router';
+import T from './automation-router-1';
+
+Vue.use(T);
 
 let myRouter = new Router();
 
