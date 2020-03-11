@@ -1,5 +1,5 @@
 <template>
-  <div class="left"></div>
+  <div class="left">left-view</div>
 </template>
 
 <script>

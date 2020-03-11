@@ -2390,7 +2390,7 @@
     define('queue',[
         'base',
         'mediator',
-        'file'
+        'aa/file'
     ], function( Base, Mediator, WUFile ) {
     
         var $ = Base.$,
@@ -2607,7 +2607,7 @@
         'base',
         'uploader',
         'queue',
-        'file',
+        'aa/file',
         'lib/file',
         'runtime/client',
         'widgets/widget'
@@ -3074,7 +3074,7 @@
     define('widgets/upload',[
         'base',
         'uploader',
-        'file',
+        'aa/file',
         'lib/transport',
         'widgets/widget'
     ], function( Base, Uploader, WUFile, Transport ) {
@@ -3734,7 +3734,7 @@
     define('widgets/validator',[
         'base',
         'uploader',
-        'file',
+        'aa/file',
         'widgets/widget'
     ], function( Base, Uploader, WUFile ) {
     

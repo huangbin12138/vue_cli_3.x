@@ -55,6 +55,13 @@ if (process.env.NODE_ENV === 'development') {
 const routes = [];
 const resultRoutes = [];
 
+const setView = (name, parent, view) => {
+  if (parent) {
+    parent.components[name] = view;
+    parent.children && parent.children.map(child => setView(name, child, view));
+  }
+};
+
 // 分层
 const findParent = (parents, route, start = 0) => {
   if (Array.isArray(parents) && parents.length) {
@@ -70,10 +77,13 @@ const findParent = (parents, route, start = 0) => {
       if (parentReg.test(route.___) && !findParent(parent.children, route)) {
         if (viewReg.test(route.___)) {
           // route 为 parent 的命名视图
-          let name = route.___.split('.')[1]; // 命名视图的name
-          parent.components[name] = route.components.default;
+          setView(route.___.split('.')[1], parent, route.components.default);
         } else {
           // route 为 parent 的子路由
+          Object.keys(parent.components).filter(n => n !== 'default').map(viewName => {
+            // 设置子路由的命名视图
+            route.components[viewName] = parent.components[viewName];
+          });
           parent.children.push(route);
         }
         return true;
@@ -90,10 +100,13 @@ const findParent = (parents, route, start = 0) => {
         findParent(parents, route); // 避免多个子路由在父路由前先被配置，而成为父路由的同级路由
         if (viewReg.test(parent.___)) {
           // parent 为 route 的命名视图
-          let name = parent.___.split('.')[1]; // 命名视图的name
-          route.components[name] = parent.components.default;
+          setView(parent.___.split('.')[1], route, parent.components.default);
         } else {
           // parent 为 route 的子路由
+          Object.keys(route.components).filter(n => n !== 'default').map(viewName => {
+            // 设置子路由的命名视图
+            parent.components[viewName] = route.components[viewName];
+          });
           route.children.push(parent);
         }
         return true;
