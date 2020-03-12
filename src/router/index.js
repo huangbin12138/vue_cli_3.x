@@ -1,28 +1,22 @@
+import Vue from 'vue';
 import store from '../store';
-import Router from './automation-router';
-import T from './automation-router-1';
+import autoRouter from './automation-router';
+import Router from 'vue-router';
 
-Vue.use(T);
+Vue.use(Router);
+Vue.use(autoRouter);
 
-let myRouter = new Router();
+let routes = Vue.$autoRouter.routes;
 
-myRouter.setRouteByName('Test1DB', route => {
-  route.meta.title = 'DBDBDB';
-}).addRoutes([
-  {
-    path: '*',
-    redirect: '/menu'
-  },
-]);
-
-let router = myRouter.createRouter({
+let router = new Router({
+  routes,
   scrollBehavior(to, from, savedPosition) {
     return {x: 0, y: 0}
   }
 });
 
 router.beforeEach((to, from, next) => {
-  store.commit('setMenu', myRouter.routes.slice(0, -1));
+  store.commit('setMenu', routes.slice(0, -1));
   next();
 });
 
