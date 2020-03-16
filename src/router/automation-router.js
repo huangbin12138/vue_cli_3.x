@@ -87,6 +87,11 @@ export default {
     };
     let viewsReg = new RegExp(`^src/${views}/`);
     let compReg = new RegExp(`^src/${components}/`);
+    if(process.env.NODE_ENV === 'production'){
+      // build时读取组件路径错误
+      viewsReg = new RegExp(`^\\./${views}/`);
+      compReg = new RegExp(`^\\./${components}/`);
+    }
     let viewReg = /View\.\w+$/; // 判断是否为命名视图;
 
     AllFile.forEach(file => {
